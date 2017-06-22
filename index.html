@@ -11,6 +11,7 @@
     <link rel="stylesheet" type='text/css' media='all' href="static/css/colors.css">
     <link rel="stylesheet" type='text/css' media='all' href="static/css/svg-icons.css">
     <link rel="stylesheet" type='text/css' media='all' href="static/css/font-awesome.min.css">
+    <link rel="stylesheet" type='text/css' media='all' href="static/css/highlight/darcula.css">
 
 
     <!-- FACEBOOK -->
@@ -345,12 +346,118 @@
         </section>
         <section>
           <div class="wrap">
-            <h1>Estructura de la aplicación</h1>
+            <h1>Server Side Rendering</h1>
+            <div class="grid">
+              <div class="column">
+                <p class="text-intro">Sin esto esta charla no tendria sentido.</p>
+                <ul>
+                  <li>Nuestra SPA renderiza el HTML en el lado de servidor.</li>
+                  <li>Los Robots reciben contenido que pueden entender.</li>
+                  <li>React se enlaza con el HTML renderizado en cliente</li>
+                  <li>En Server Side <strong>no hay</strong> window, document, etc...</li>
+                </ul>
+              </div>
+              <div class="column">
+                <pre class="code">
+<code class="js">
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+
+const renderApp = () => {
+  const app = (
+    &lt;h1&gt;Hello, world!&lt;/h1&gt;
+  );
+
+  return renderToString(component);
+};
+</code>
+                </pre>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="wrap aligncenter">
+            <h3>SSR y Symfony</h3>
+            <h3><a href="https://github.com/Limenius/ReactBundle">https://github.com/Limenius/ReactBundle</a></h3>
+            <p><img class="avatar-80" src="static/images/nachoavatar.jpg"/></p>
+          </div>
+        </section>
+        <section class="fullscreen">
+            <div class="grid">
+              <div class="column">
+                <pre>
+<code class="twig">
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  {{ react_component('ReactApp', {'props': props}) }}
+{% endblock %}
+
+{% block javascripts %}
+  &lt;script src="{{ asset('build/app.js') }}"&gt;&lt;/script&gt;
+{% endblock %}
+</code>
+                </pre>
+                <pre>
+<code class="js">
+  import ReactOnRails from 'react-on-rails'
+  import ReactApp from './server/ReactApp'
+
+  ReactOnRails.register({ ReactApp })
+</code>
+                </pre>
+              </div>
+              <div class="column">
+                <pre>
+<code class="twig">
+/**
+ * @Route("/", name="homepage")
+ */
+public function homeAction(Request $request)
+{
+    $serializer = $this->get('serializer');
+    return $this->render('recipe/home.html.twig', [
+        'props' => $serializer->normalize(
+            ['foo' => $this->get('foo.repository')->findAll(),
+             'baseUrl' => $this->generateUrl('homepage'),
+             'location' => $request->getRequestUri()
+            ])
+    ]);
+}
+</code>
+                </pre>
+              </div>
+            </div>
+        </section>
+        <section>
+          <h1>Al 99% de la gente ya le funciona esta solución...</h1>
+        </section>
+        <section>
+          <div class="wrapper">
+            <div class="content-right">
+              <h1 class="alignright">...A nosotros no</h1>
+            </div>
           </div>
         </section>
         <section>
           <div class="wrap">
-            <h1>SSR</h1>
+            <ul class="flexblock">
+              <li>
+                <p>PhpExecJs</p>
+                <img src="static/images/LoadingTimeline.png" width="583"/>
+              </li>
+              <li>
+                <p>External Node Server</p>
+                <img src="static/images/LoadingTimeline2.png" width="413"/>
+              </li>
+            </ul>
+            <p class="alignright">*No estan a escala</p>
+          </div>
+        </section>
+        <section>
+          <div class="wrap aligncenter">
+            <img src="static/images/logos/expressjs.png" />
           </div>
         </section>
         <section>
@@ -401,8 +508,10 @@
 
     <!-- Required -->
     <script src="static/js/webslides.js"></script>
+    <script src="static/js/highlight.pack.js"></script>
     <script>
       window.ws = new WebSlides();
+      hljs.initHighlightingOnLoad();
     </script>
   </body>
 </html>
