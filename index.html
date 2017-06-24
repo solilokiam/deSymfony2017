@@ -455,20 +455,206 @@ public function homeAction(Request $request)
             <p class="alignright">*No estan a escala</p>
           </div>
         </section>
-        <section>
+        <section class="bg-white">
           <div class="wrap aligncenter">
             <img src="static/images/logos/expressjs.png" />
           </div>
         </section>
         <section>
           <div class="wrap">
-            <h1>Backend</h1>
-            <p>CQRS, Separacion por capas muy lightweight, Serializacion a tope, JSON Webtoken. Integrar legacy con la nueva app desacoplando con DDD</p>
+            <h2>¿Que hacemos con ExpressJS?</h2>
+            <p class="text-intro">
+              Una aplicacion muy simple con solamente 2 misiones.
+            </p>
+            <ul class="flexblock features">
+              <li>
+                <div>
+                  <h2><i class="fa fa-paint-brush" aria-hidden="true"></i> Renderizar SSR</h2>
+                  Controlador único.<br>
+                  Routing gestionado desde React.<br>
+                  Cache de Vista
+                </div>
+              </li>
+              <li>
+                <div>
+                  <h2><i class="fa fa-server" aria-hidden="true"></i> Proxy de la API</h2>
+                  Frontend no se contecta directamente con el backend.<br>
+                  Cacheamos la mayoria de responses.<br>
+                  Cocinamos datos.
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
+        <section>
+          <div class="wrap">
+            <ul class="flexblock">
+              <li>
+                <h2>Worst Case Scenario</h2>
+                <img src="static/images/ExpressTimeline.png" width="366"/>
+              </li>
+              <li>
+                <h2>Best Case Scenario</h2>
+                <img src="static/images/ExpressBestCaseTimeline.png" width="55"/>
+              </li>
+            </ul>
+            <p class="alignright">*No estan a escala</p>
+          </div>
+        </section>
+        <section class="aligncenter">
+          <h1>¿Y el Backend?</h1>
+        </section>
+        <section>
+          <div class="wrap">
+            <h2>Backend</h2>
+            <p class="textintro">Hemos reescrito la aplicación antigua completamente. Utilizando "mejores practicas".</p>
+            <ul class="flexblock features">
+              <li><h2>CQRS</h2> Lectura desde ElasticSearch, Escritura a MySQL (Aurora)</li>
+              <li><h2>DDD</h2> Separación por capas muy lightweight.</li>
+              <li><h2>Command Bus</h2> Utilizamos Tactician.</li>
+              <li><h2>Serializacion</h2> Nuestro modelo devuelve objectos, colecciones de objetos, todo el trabajo lo hace el jms_serializer.</li>
+              <li><h2>Legacy</h2> Hemos integrado mucho código legacy desacoplandolo con DDD.</li>
+              <li><h2>Stateless</h2> Nuestro back es completamente stateless. Toda la autenticación funciona a traves de JSON Web Token.</li>
+            </ul>
+          </div>
+        </section>
+        <section>
+          <div class="wrap">
+            <pre>
+<code class="php">
+public function getHomeAction(ParamFetcher $fetcher): array
+{
+    $req = new GetHomeRequest($fetcher->all());
+
+    return $this->handle($req);
+}
+</code>
+            </pre>
+          </div>
+        </section>
+        <section class="fullscreen">
+          <div class="wrap">
+            <pre>
+<code class="php">
+  public function handle(GetHomeRequest $request): array
+      {
+          $isMobile = $request->isMobile();
+
+          $topChannels = $this->bus->handle(new GetTopChannelsRequest($request->getRaw([
+              CommandRequest::LIMIT => self::TOP_CHANNELS_QTY
+          ])));
+
+          $response = array_merge(
+              [
+                  'mostViewedVideos' => $this->bus->handle(new GetMostViewedVideosRequest($request->getRaw([
+                      CommandRequest::LIMIT => $isMobile ? self::MOBILE_VIDEOS_MOST_VIEWED_QTY : self::MOST_VIEWED_VIDEOS_QTY
+                  ]))),
+
+                  'mostRecentVideos' => $this->bus->handle(new GetRecentVideosRequest($request->getRaw([
+                      CommandRequest::LIMIT =>  $isMobile ? self::MOBILE_VIDEOS_MOST_RECENT_QTY : self::RECENT_VIDEOS_QTY
+                  ]))),
+
+                  'topChannels' => array_slice($topChannels, 0, $isMobile ? self::MOBILE_TOP_CHANNELS_QTY : self::TOP_CHANNELS_TO_DISPLAY_QTY),
+
+                  'featuredPornstars' => $this->bus->handle(new GetPornstarsRequest($request->getRaw([
+                      CommandRequest::LIMIT =>  $isMobile ? self::MOBILE_FEATURED_PORNSTARS_QTY : self::FEATURED_PORNSTARS_QTY
+                  ]))),
+              ],
+              $this->handleEmbedded($request)
+          );
+
+          return $isMobile
+              ? $response
+              : array_merge($response, [
+                  'topChannelsVideos' => $this->getTopChannelsVideos($request, $topChannels)
+              ])
+          ;
+      }
+</code>
+            </pre>
           </div>
         </section>
         <section>
           <div class="wrap">
             <h1>Routing</h1>
+            <div class="grid">
+              <div class="column">
+                <ul class="flexblock specs">
+                  <li>Completamente gestionado desde React</li>
+                  <li>React Router 4 (aunque empezamos con el 3)</li>
+                  <li>No conectado con el store</li>
+                  <li>Composition everywhere</li>
+                </ul>
+              </div>
+              <div class="column">
+                <pre>
+<code class="js">
+&lt;Provider store={this.store}&gt;
+  &lt;IntlProvider&gt;
+    &lt;Router history={history}&gt;
+      &lt;App&gt;
+        &lt;RouteHandler&gt;
+          &lt;RouteRenderer /&gt;
+        &lt;/RouteHandler&gt;
+      &lt;/App&gt;
+    &lt;/Router&gt;
+  &lt;/IntlProvider&gt;
+&lt;/Provider&gt;
+</code>
+                </pre>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="fullscreen">
+          <div class="wrap">
+            <h2>&lt;RouteRenderer&gt;</h2>
+            <p class="text-intro">Traduce de nuestro fichero de configuración a algo que entiende ReactRouter</p>
+            <pre>
+<code class="js">
+export default [
+  {
+    name: 'video_page',
+    path: '/videos/:slug\\_:uuid',
+    component: Video,
+    fetchData: dataFetcher.fetchVideoData,
+  },
+  {
+    name: 'user_playlists',
+    path: '/users/:username/playlists',
+    component: UserPlaylists,
+    requireAuth: true,
+  },
+  {
+    name: 'home',
+    path: `/:orientation(${orientations.ORIENTATION_GAY}|${orientations.ORIENTATION_SHEMALE})?/`,
+    component: Home,
+    fetchData: dataFetcher.fetchHomeData,
+    exact: true,
+  },
+];
+</code>
+            </pre>
+          </div>
+        </section>
+        <section class="fullscreen">
+          <div class="wrap">
+            <h2>&lt;RouteHandler&gt;</h2>
+            <p class="text-intro">El chico listo de clase</p>
+            <ul class="flexblock steps">
+              <li>
+                <h2>Peticion de datos al backend</h2>
+                  Utilizando promesas y de manera asincrona.
+              </li>
+              <li>
+                <h2>Peticion de componentes (code splitting)</h2>
+                  La optimización sin querer...
+              </li>
+              <li>
+                <h2>Mount &amp; Unmount</h2>
+                No realizamos la "navegación" hasta que no tenemos los datos necesarios.
+              </li>
+            </ul>
           </div>
         </section>
         <section>
