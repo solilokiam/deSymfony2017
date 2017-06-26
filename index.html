@@ -46,19 +46,11 @@
   <body>
     <main role="main">
       <article id="webslides">
-        <section class="bg-black">
-         <span class="background dark" style="background-image:url('static/images/backgrounds/jan-erik-waider-144384.jpg')"></span>
-          <!--.wrap = container (width: 90%) -->
-          <div class="wrap aligncenter">
-            <h1><strong>Symfony, React y 7,5 M de usuarios diarios</strong></h1>
-            <p class="text-intro">o como transformamos nuestra V en un nuevo MVC</p>
-          </div>
-          <!-- .end .wrap -->
+        <section class="fullscreen bg-white">
+          <img src="static/images/portada.jpg" width="100%" />
         </section>
-        <section>
-          <div class="wrap fadeInUp">
-            <h1>Gracias a los Patrocinadores</h1>
-          </div>
+        <section class="fullscreen bg-white">
+          <img src="static/images/patrocinadores.jpg" width="100%" />
         </section>
         <section>
           <div class="wrap fadeInUp">
@@ -655,6 +647,32 @@ export default [
                 No realizamos la "navegación" hasta que no tenemos los datos necesarios.
               </li>
             </ul>
+          </div>
+        </section>
+        <section>
+          <h2>&lt;NamedIntlLink&gt;</h2>
+          <p class="text-intro">Nuestro {{ url ('named_route') }}</p>
+            <ul class="flexblock steps">
+              <li>Esta conectado con el sistema de traducciones</li>
+              <li>Esta conectado con el store para gestion de rutas por config</li>
+              <li>Gestiona parametros en la url</li>              
+            </ul>
+            <p>
+            <pre>
+<code class="html">
+  &lt;NamedIntlLink to=&quot;video_listing&quot; params={{ order: 'latest', otherparam: '1' }} hash="testhash"&gt;
+    Latest Videos
+  &lt;/NamedIntlLink&gt;
+</code>
+            </pre>
+            <pre>
+<code class="html">
+&lt;a href="https://www.porntube.com/videos/latest?otherparam=1#testhash"&gt;
+  Latest Videos
+&lt;/a&gt;
+</code>
+            </pre>
+          </p>
           </div>
         </section>
         <section>
