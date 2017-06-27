@@ -45,7 +45,7 @@
   </head>
   <body>
     <main role="main">
-      <article id="webslides">
+      <article id="webslides" class="vertical">
         <section class="fullscreen bg-white">
           <img src="static/images/portada.jpg" width="100%" />
         </section>
@@ -650,6 +650,33 @@ export default [
           </div>
         </section>
         <section>
+          <div class="wrapper">
+            <h2>Proceso de carga de página</h2>
+            <p class="text-intro">Como funciona el route handler paso a paso.</p>
+            <ul class="flexblock steps">
+              <li>
+                <h2>1. Carga del componente</h2>
+                <p>Vamos a buscar el componete de manera asincrona en frontend.</p>
+              </li>
+              <li>
+                <div class="process step-2"></div>
+                <h2>2. Data Fetching</h2>
+                <p>Llamamos a la funcion definida en dataFetcher de manera asincrona.</p>
+              </li>
+              <li>
+                <div class="process step-3"></div>
+                <h2>3. Proceso de datos</h2>
+                <p>Los datos se envian al store de la aplicación.</p>
+              </li>
+              <li>
+                <div class="process step-4"></div>
+                <h2>4. Actualizamos las vistas</h2>
+                <p>Una vez tenemos todos los datos y componentes necesarios actualizamos la vista.</p>
+              </li>
+            </ul>
+          </div>
+        </section>
+        <section>
           <h2>&lt;NamedIntlLink&gt;</h2>
           <p class="text-intro">Nuestro {{ url ('named_route') }}</p>
             <ul class="flexblock steps">
@@ -677,17 +704,140 @@ export default [
         </section>
         <section>
           <div class="wrap">
-            <h1>SEO</h1>
+            <div class="content-left">
+              <h2>Gestión de Estados</h2>
+              <p>En Symfony el estado suele residir en el servidor</p>
+              <div class="content-left">
+                <h3>PHP es stateless</h3>
+                <p>Necesitamos un apoyo externo. Redis, Mysql, Memcached, Cookies...</p>
+              </div>
+              <div class="content-left">
+                <h3>La sesión es el rey</h3>
+                <p>Si perdemos la conexión estamos perdidos</p>
+              </div>
+            </div>
+            <div class="content-left">
+              <pre>
+<code class="php">
+public function indexAction(SessionInterface $session)
+{
+  $session = $request->getSession();
+
+  $session->set('foo', 'bar');
+
+  $foobar = $session->get('foobar');
+
+  $filters = $session->get('filters', array());
+}
+</code>
+              </pre>
+            </div>
           </div>
         </section>
         <section>
           <div class="wrap">
-            <h1>Traducciones</h1>
+            <div class="content-left">
+              <h2>Estado del componente</h2>
+            </div>
+            <div class="content-left">
+              <p>Un componente puede almacenar su estado de manera <strong>aislada</strong> e <strong>independiente</strong>. Un cambio en el estado <strong>re-renderiza solamente</strong> el componente afectado</p>
+            </div>
+            <ul class="flexblock features">
+              <li><p>Abierto/Cerrado</p></li>
+              <li><p>Fake Interaction</p></li>
+              <li><p>Contadores Internos</p></li>
+            </ul>
+          </div>
+        </section>
+        <section>
+          <div class="wrapper">
+            <pre>
+<code class="js">
+class ClickCounter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      clicks: 0
+    };
+
+    this.clickButton = this.clickButton.bind(this);
+  }
+
+  clickButton() {
+    this.setState({
+      clicks: this.state.clicks + 1,
+    });
+  }
+
+  render() {
+    return (
+      &lt;button onClick={this.clickButton}&gt;
+        This button has been clicked {this.state.clicks} times
+      &lt;/button&gt;
+    );
+  }
+}
+</code>
+            </pre>
           </div>
         </section>
         <section>
           <div class="wrap">
-            <h1>Gestión de Estados</h1>
+            <h2>Estado de la aplicación</h2>
+            <ul class="flexblock">
+              <li>
+                <h2>Browser Side</h2>
+                La información reside en el lado del cliente.
+              </li>
+              <li>
+                <h2>Propagable</h2>
+                No esta aislado. Un cambio en el estado se propaga a través de todos los contenedores.
+              </li>
+              <li>
+                <h2>Persitible</h2>
+                Lo podemos persistir en el local storage, session storage, indexedDB, cookie o donde queramos.
+              </li>
+              <li>
+                <h2>Conectionless</h2>
+                Puedes alterarlo todo lo que quieras sin necesidad del lado de servidor.
+              </li>
+            </ul>
+          </div>
+        </section>
+        <section>
+          <div class="wrap aligncenter">
+            <img src="static/images/logos/redux.png" width="500" />
+            <h2>React <i class="fa fa-heart"></i> Redux</h2>
+          </div>
+        </section>
+        <section>
+          <div class="wrap">
+            <h2>Tres Principios</h2>
+            <ul class="flexblock">
+              <li>
+                <h2>Origen unico de la verdad</h2>
+                <p>El estado de la aplicacion se guarda en un objecto dentro de un <strong>store</strong> único</p>
+              </li>
+              <li>
+                <h2>El estado es exclusivo de lectura</h2>
+                <p>La única manera de alterar el estado es emitir una <strong>action</strong></p>
+              </li>
+              <li>
+                <h2>Los cambios se hacen con funciones puras</h2>
+                <p>Para especificar como las acciones alteran el estado escribimos <strong>reductores</strong> puros</p>
+            </ul>
+          </div>
+        </section>
+        <section>
+          <div class="wrapper aligncenter">
+            <img src="static/images/reduxFlow.gif" width="800"/>
+            <a href="http://slides.com/jenyaterpil/redux-from-twitter-hype-to-production#/">http://slides.com/jenyaterpil/redux-from-twitter-hype-to-production#/</a>
+          </div>
+        </section>
+        <section>
+          <div class="wrapper aligncenter">
+            <img src="static/images/reduxThunkFlow.gif" width="700"/>
+            <a href="http://slides.com/jenyaterpil/redux-from-twitter-hype-to-production#/">http://slides.com/jenyaterpil/redux-from-twitter-hype-to-production#/</a>
           </div>
         </section>
         <section>
@@ -695,9 +845,74 @@ export default [
             <h1>Gestion de Usuarios</h1>
           </div>
         </section>
+        <section class="bg-white">
+          <div class="wrap">
+            <div class="grid">
+              <div class="column">
+                <h2>SEO</h2>
+                <p class="text-intro">
+                  En SPA's el SEO es posible.
+                </p>
+                <ul class="flexblock specs">
+                  <li>Utilizamos react-helmet 3.x.</li>
+                  <li>Se ocupa unicamente de lo que va en &lt;head /&gt;</li>
+                  <li>Toda la magia ocurre en SSR.</li>
+                </ul>
+              </div>
+              <div class="column">
+                <pre>
+<code class="js">
+&lt;Helmet
+  title="this is an amazin title"
+  meta={[
+    { name: 'description', content: 'Test description' },
+    { name: 'keywords', content: 'This is the keywords' },
+  ]}
+  link={[
+      {rel: "canonical", href: "http://mysite.com/example"},
+  ]}
+/&gt;
+</code>
+                </pre>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section>
+          <pre>
+<code class="js">
+const buildPage = ({ componentHTML, initialState, headAssets }) =&gt; (`
+&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    ${headAssets.title.toString()}
+    ${headAssets.meta.toString()}
+    ${headAssets.link.toString()}
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id=&quot;app&quot;&gt;${componentHTML}&lt;/div&gt;
+    &lt;script&gt;window.INITIALSTATE = '${base64.encode(encodeURIComponent(JSON.stringify(initialState)))}'&lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;/assets/app.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+`);
+
+export default (store, location) =&gt; {
+  const initialState = store.getState();
+  const componentHTML = createApp(store, location);
+  const headAssets = Helmet.rewind();
+  return buildPage({ componentHTML, initialState, headAssets });
+};
+</code>
+          </pre>
+        </section>
+        <section class="aligncenter">
+          <h2>&lt;NamedIntlLink /&gt; soporta los atributos clasicos de SEO</h2>
+          <p class="text-intro">rel="nofollow" title="test title" ...</p>
+        </section>
         <section>
           <div class="wrap">
-            <h1>Assets</h1>
+            <h1>Traducciones</h1>
           </div>
         </section>
         <section>
