@@ -230,7 +230,7 @@
                 <ul class="description text-intro">
                   <li>Limpiar y hacer nuestro CSS modular con SASS</li>
                   <li>Poner orden a JQuery</li>
-                  <li>Mobile First</li>
+                  <li>DDD</li>
                   <li>Poner los controladores a dieta</li>
                   <li>Cambiar la manera como orquestramos</li>
                 </ul>
@@ -238,7 +238,6 @@
               <div class="column">
                 <ul class="description text-intro">
                   <li>Poner orden a las plantillas de twig</li>
-                  <li>DDD</li>
                   <li>Jenkins</li>
                   <li>Symfony 3</li>
                   <li>Live Reload</li>
@@ -568,6 +567,237 @@ public function getHomeAction(ParamFetcher $fetcher): array
         </section>
         <section>
           <div class="wrap">
+            <div class="content-left">
+              <h2>Gestión de Estados</h2>
+              <p>En Symfony el estado suele residir en el servidor</p>
+              <div class="content-left">
+                <h3>PHP es stateless</h3>
+                <p>Necesitamos un apoyo externo. Redis, Mysql, Memcached, Cookies...</p>
+              </div>
+              <div class="content-left">
+                <h3>La sesión es el rey</h3>
+                <p>Si perdemos la conexión estamos perdidos</p>
+              </div>
+            </div>
+            <div class="content-left">
+              <pre>
+<code class="php">
+public function indexAction(SessionInterface $session)
+{
+  $session = $request->getSession();
+
+  $session->set('foo', 'bar');
+
+  $foobar = $session->get('foobar');
+
+  $filters = $session->get('filters', array());
+}
+</code>
+              </pre>
+            </div>
+          </div>
+        </section>
+        <section>
+          <h2>Estado en la URL</h2>
+          <p>Muchas veces guardamos informacion en la url a traves de parametros o querystring</p>
+        </section>
+        <section>
+          <div class="wrap">
+            <div class="content-left">
+              <h2>Estado del componente</h2>
+            </div>
+            <div class="content-left">
+              <p>Un componente puede almacenar su estado de manera <strong>aislada</strong> e <strong>independiente</strong>. Un cambio en el estado <strong>re-renderiza solamente</strong> el componente afectado</p>
+            </div>
+            <ul class="flexblock features">
+              <li><p>Abierto/Cerrado</p></li>
+              <li><p>Fake Interaction</p></li>
+              <li><p>Contadores Internos</p></li>
+            </ul>
+          </div>
+        </section>
+        <section class="fullscreen">
+          <div class="wrapper">
+            <pre>
+<code class="js">
+class ClickCounter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      clicks: 0
+    };
+
+    this.clickButton = this.clickButton.bind(this);
+  }
+
+  clickButton() {
+    this.setState({
+      clicks: this.state.clicks + 1,
+    });
+  }
+
+  render() {
+    return (
+      &lt;button onClick={this.clickButton}&gt;
+        This button has been clicked {this.state.clicks} times
+      &lt;/button&gt;
+    );
+  }
+}
+</code>
+            </pre>
+          </div>
+        </section>
+        <section>
+          <div class="wrap">
+            <h2>Estado de la aplicación</h2>
+            <ul class="flexblock">
+              <li>
+                <h2>Browser Side</h2>
+                La información reside en el lado del cliente.
+              </li>
+              <li>
+                <h2>Propagable</h2>
+                No esta aislado. Un cambio en el estado se propaga a través de todos los contenedores.
+              </li>
+              <li>
+                <h2>Persitible</h2>
+                Lo podemos persistir en el local storage, session storage, indexedDB, cookie o donde queramos.
+              </li>
+              <li>
+                <h2>Conectionless</h2>
+                Puedes alterarlo todo lo que quieras sin necesidad del lado de servidor.
+              </li>
+            </ul>
+          </div>
+        </section>
+        <section>
+          <div class="wrap aligncenter">
+            <img src="static/images/logos/redux.png" width="500" />
+            <h2>React <i class="fa fa-heart"></i> Redux</h2>
+          </div>
+        </section>
+        <section>
+          <div class="wrap">
+            <h2>Tres Principios</h2>
+            <ul class="flexblock">
+              <li>
+                <h2>Origen unico de la verdad</h2>
+                <p>El estado de la aplicacion se guarda en un objecto dentro de un <strong>store</strong> único</p>
+              </li>
+              <li>
+                <h2>El estado es exclusivo de lectura</h2>
+                <p>La única manera de alterar el estado es emitir una <strong>action</strong></p>
+              </li>
+              <li>
+                <h2>Los cambios se hacen con funciones puras</h2>
+                <p>Para especificar como las acciones alteran el estado escribimos <strong>reductores</strong> puros</p>
+            </ul>
+          </div>
+        </section>
+        <section class="fullscreen">
+            <div class="wrap aligncenter">
+              <img src="static/images/reduxState.png" width="700" />
+            </div>
+        </section>
+        <section>
+          <h2>Acciones</h2>
+          <pre>
+<code class="js">
+export const loadSearchSuggestions = query => (
+  {
+    type: actions.LOAD_SEARCH_SUGGESTIONS,
+    query,
+  }
+);
+</code>
+          </pre>
+        </section>
+        <section>
+          <h2>Reducers</h2>
+          <pre>
+<code class="js">
+function config(state = {}, action) {
+  switch (action.type) {
+    case SET_ORIENTATION: {
+      return { ...state, orientation: action.orientation };
+    }
+
+    default:
+      return state;
+  }
+}
+</code>
+          </pre>
+        </section>
+        <section>
+          <div class="wrap aligncenter">
+            <h2 class="alignleft">Flujo de datos</h2>
+            <div>
+              <img src="static/images/reduxFlow.gif" width="800"/>
+            </div>
+            <a href="http://slides.com/jenyaterpil/redux-from-twitter-hype-to-production#/">http://slides.com/jenyaterpil/redux-from-twitter-hype-to-production#/</a>
+          </div>
+        </section>
+        <section>
+          <div class="wrap">
+            <div class="content-left">
+            <h2>Conexion con el backend</h2>
+            <ul class="flexblock specs">
+              <li>Los action creators son sincronos</li>
+              <li>Redux-Thunk es un middleware que los transforma en asincronos</li>
+              <li>Los action creator devuelven una funcion (thunk) que tiene como parametros dispatch y getState</li>
+            </ul>
+            </div>
+            <div class="content-left">
+              <pre>
+<code class="js">
+export const createCommentResponse = data => (
+  {
+    type: CREATE_COMMENT,
+    comment: data,
+  }
+);
+
+export function createCommentRequest(videoUuid, comment) {
+  return (dispatch) => {
+    const url = `/api/videos/${videoUuid}/comments`;
+
+    return axios.post(url, { comment })
+      .then((response) => {
+        dispatch(createCommentResponse(response.data));
+      })
+      .catch(() => {
+        dispatch({
+          type: MESSAGE_ERROR_COMMENT,
+          message: ERROR_CREATE_COMMENT,
+        });
+      });
+  };
+}
+</code>
+              </pre>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="wrapper aligncenter">
+            <img src="static/images/reduxThunkFlow.gif" width="650"/>
+            <a href="http://slides.com/jenyaterpil/redux-from-twitter-hype-to-production#/">http://slides.com/jenyaterpil/redux-from-twitter-hype-to-production#/</a>
+          </div>
+        </section>
+        <section>
+          <h2>Persistencia</h2>
+          <ul class="flexblock features">
+            <li><h2>¿Como lo guardamos?</h2> Utilizamos redux-persist. Persistencia/Hidratación automatica, extensible, facil de utilizar</li>
+            <li><h2>¿Que guardamos?</h2> Preferencias del usuario, Informacion de Autenticación, Initial State...</li>
+            <li><h2>¿Donde lo guardamos?</h2> Depende de las caracteristicas del browser. LocalStorage, WebSQL, IndexedDB</li>
+            <li><h2>¿Cuanto lo guardamos?</h2> Depende de la información</li>
+            <li><h2>¿Funciona siempre?</h2> No siempre, hemos de estar preparados para fallar. Modo Anonimo</li>
+          </ul>
+        </section>
+        <section>
+          <div class="wrap">
             <h1>Routing</h1>
             <div class="grid">
               <div class="column">
@@ -704,145 +934,38 @@ export default [
         </section>
         <section>
           <div class="wrap">
-            <div class="content-left">
-              <h2>Gestión de Estados</h2>
-              <p>En Symfony el estado suele residir en el servidor</p>
-              <div class="content-left">
-                <h3>PHP es stateless</h3>
-                <p>Necesitamos un apoyo externo. Redis, Mysql, Memcached, Cookies...</p>
-              </div>
-              <div class="content-left">
-                <h3>La sesión es el rey</h3>
-                <p>Si perdemos la conexión estamos perdidos</p>
-              </div>
-            </div>
-            <div class="content-left">
-              <pre>
-<code class="php">
-public function indexAction(SessionInterface $session)
-{
-  $session = $request->getSession();
-
-  $session->set('foo', 'bar');
-
-  $foobar = $session->get('foobar');
-
-  $filters = $session->get('filters', array());
-}
-</code>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section>
-          <div class="wrap">
-            <div class="content-left">
-              <h2>Estado del componente</h2>
-            </div>
-            <div class="content-left">
-              <p>Un componente puede almacenar su estado de manera <strong>aislada</strong> e <strong>independiente</strong>. Un cambio en el estado <strong>re-renderiza solamente</strong> el componente afectado</p>
-            </div>
-            <ul class="flexblock features">
-              <li><p>Abierto/Cerrado</p></li>
-              <li><p>Fake Interaction</p></li>
-              <li><p>Contadores Internos</p></li>
-            </ul>
-          </div>
-        </section>
-        <section>
-          <div class="wrapper">
-            <pre>
-<code class="js">
-class ClickCounter extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      clicks: 0
-    };
-
-    this.clickButton = this.clickButton.bind(this);
-  }
-
-  clickButton() {
-    this.setState({
-      clicks: this.state.clicks + 1,
-    });
-  }
-
-  render() {
-    return (
-      &lt;button onClick={this.clickButton}&gt;
-        This button has been clicked {this.state.clicks} times
-      &lt;/button&gt;
-    );
-  }
-}
-</code>
-            </pre>
-          </div>
-        </section>
-        <section>
-          <div class="wrap">
-            <h2>Estado de la aplicación</h2>
-            <ul class="flexblock">
-              <li>
-                <h2>Browser Side</h2>
-                La información reside en el lado del cliente.
-              </li>
-              <li>
-                <h2>Propagable</h2>
-                No esta aislado. Un cambio en el estado se propaga a través de todos los contenedores.
-              </li>
-              <li>
-                <h2>Persitible</h2>
-                Lo podemos persistir en el local storage, session storage, indexedDB, cookie o donde queramos.
-              </li>
-              <li>
-                <h2>Conectionless</h2>
-                Puedes alterarlo todo lo que quieras sin necesidad del lado de servidor.
-              </li>
-            </ul>
+            <h2>Gestion de Usuarios</h2>
+            <p class="text-intro">¿Como sobrevivir en un entorno sin sesiones?</p>
           </div>
         </section>
         <section>
           <div class="wrap aligncenter">
-            <img src="static/images/logos/redux.png" width="500" />
-            <h2>React <i class="fa fa-heart"></i> Redux</h2>
+            <h2>JSON WEB TOKEN</h2>
           </div>
         </section>
         <section>
+          <img src="static/images/jwtFlow.png" />
+        </section>
+        <section>
           <div class="wrap">
-            <h2>Tres Principios</h2>
-            <ul class="flexblock">
-              <li>
-                <h2>Origen unico de la verdad</h2>
-                <p>El estado de la aplicacion se guarda en un objecto dentro de un <strong>store</strong> único</p>
-              </li>
-              <li>
-                <h2>El estado es exclusivo de lectura</h2>
-                <p>La única manera de alterar el estado es emitir una <strong>action</strong></p>
-              </li>
-              <li>
-                <h2>Los cambios se hacen con funciones puras</h2>
-                <p>Para especificar como las acciones alteran el estado escribimos <strong>reductores</strong> puros</p>
+            <h2>JSON WEB TOKEN</h2>
+            <p class="text-intro">¿Porque lo utilizamos?</p>
+            <ul class="flexblock features">
+              <li>Es un estandar provado, seguro y con librerias en muchos lenguajes</li>
+              <li>Tenemos demasiada distancia entre el cliente y el servidor</li>
+              <li>Nos gusta el cambio de paradigma. El estado de la aplicacion ya no esta en el servidor</li>
+              <li>Nos preparamos hacia el futuro con nuevos canales de consumo. Apps, SmartTV, VR...</li>
             </ul>
           </div>
         </section>
         <section>
-          <div class="wrapper aligncenter">
-            <img src="static/images/reduxFlow.gif" width="800"/>
-            <a href="http://slides.com/jenyaterpil/redux-from-twitter-hype-to-production#/">http://slides.com/jenyaterpil/redux-from-twitter-hype-to-production#/</a>
-          </div>
-        </section>
-        <section>
-          <div class="wrapper aligncenter">
-            <img src="static/images/reduxThunkFlow.gif" width="700"/>
-            <a href="http://slides.com/jenyaterpil/redux-from-twitter-hype-to-production#/">http://slides.com/jenyaterpil/redux-from-twitter-hype-to-production#/</a>
-          </div>
-        </section>
-        <section>
           <div class="wrap">
-            <h1>Gestion de Usuarios</h1>
+            <h2>JSON WEB TOKEN</h2>
+            <p class="text-intro">2 consejos</p>
+            <ul class="flexblock features">
+              <li><p><i class="fa fa-key"></i> La clave secreta es el punto unico de fallo</p></li>
+              <li><p><i class="fa fa-compress"></i> El token debe ser lo más pequeño posible</p></li>
+            </ul>
           </div>
         </section>
         <section class="bg-white">
@@ -878,7 +1001,7 @@ class ClickCounter extends React.Component {
             </div>
           </div>
         </section>
-        <section>
+        <section class="fullscreen">
           <pre>
 <code class="js">
 const buildPage = ({ componentHTML, initialState, headAssets }) =&gt; (`
@@ -912,8 +1035,47 @@ export default (store, location) =&gt; {
         </section>
         <section>
           <div class="wrap">
-            <h1>Traducciones</h1>
+            <h2>Traducciones</h2>
+            <p class="text-intro">{% trans %}Casi igual de fácil que con Symfony{% endtrans %}</p>
           </div>
+        </section>
+        <section>
+          <div class="wrap">
+            <h2>Traducciones</h2>
+            <ul class="flexblock specs">
+              <li><h2>ReactIntl</h2> La versión para React de FormatJS</li>
+              <li><h2>Multitud de herramientas</h2> A parte la gestion de traducciones tambien se encarga del formateo de fechas, numeros, plurales, etc...</li>
+              <li><h2>babel-plugin-react-intl</h2> Extrae los mensajes a traducir del código para su traduccion.</li>
+              <li><h2>Basado en el estandar ICU</h2> La sintaxis tiene un formato universal entendible por muchas aplicaciones de traducción</li>
+            </li>
+          </div>
+        </section>
+        <section>
+          <pre>
+<code class="html">
+&lt;FormattedNumber value={1000}/&gt; //esto devolveria 1,000
+
+&lt;FormattedTime value={new Date(1459832991883)}/&gt; //esto devolveria &lt;span&gt;1:09 AM&lt;/span&gt;
+
+&lt;FormattedMessage id="subscribe.button" defaultMessage="subscribe" /&gt;
+
+&lt;FormattedMessage
+  values={{ videoCount: this.props.videoCount }}
+  id="filter.videocount"
+  defaultMessage="{videoCount,number} videos"
+/&gt;
+
+&lt;FormattedMessage
+  values={{ name: 'miquel', itemCount: '123432' }}
+  id="welcome.message"
+  defaultMessage="Hello, {name}, you have {itemCount, plural,
+    =0 {no items}
+    one {# item}
+    other {# items}
+  }."
+/&gt;
+</code>
+          </pre>
         </section>
         <section>
           <div class="wrap">
@@ -922,11 +1084,94 @@ export default (store, location) =&gt; {
         </section>
         <section>
           <div class="wrap">
-            <h2>¿Preguntas?</h2>
+            <h2>Testing</h2>
+            <p class="text-intro">Backend Symfony</p>
+            <ul class="flexblock">
+              <li><h2>Unitarios</h2>PHPUnit.</li>
+              <li><h2>Integración</h2> WebTestCase, de hecho Lakion\ApiTestCase</li>
+              <li><h2>Lint</h2> Reglas de symfony estrictas.</li>
+            </ul>
           </div>
         </section>
         <section>
           <div class="wrap">
+            <h2>Testing</h2>
+            <p class="text-intro">React</p>
+            <ul class="flexblock">
+              <li><h2>Unitarios con Jest</h2> Para el renderizado de componentes utilizamos Enzyme</li>
+              <li><h2>Integración con Codecept.io</h2>Es completamente backend-agnostic, nosotros lo corremos contra selenium/chrome driver</li>
+              <li><h2>Lint JS</h2>eslint con reglas de AirBnB estrictas.</li>
+              <li><h2>Lint Sass</h2> sass-lint con reglas estrictas</li>
+            </ul>
+          </div>
+        </section>
+        <section class="fullscreen">
+          <pre>
+<code class="js">
+import { shallow } from 'enzyme';
+import React from 'react';
+import Filter from '../../../components/elements/filter';
+
+describe('Filter Component', () =&gt; {
+  it('without children it should render without errors', () =&gt; {
+    const wrapper = shallow(&lt;Filter /&gt;);
+    expect(wrapper.exists()).toEqual(true);
+  });
+
+  it('renders &lt;Filter /&gt; component with children', () =&gt; {
+    const node = &lt;div&gt;Hi&lt;/div&gt;;
+    const wrapper = shallow(&lt;Filter&gt;{node}&lt;/Filter&gt;);
+    expect(wrapper.contains(node)).toEqual(true);
+    expect(wrapper.find('.btn-text').text()).toEqual('&lt;FormattedMessage /&gt;');
+    expect(wrapper.find('.filter').hasClass('open')).toEqual(false);
+    wrapper.find('.btn-text').simulate('click');
+    expect(wrapper.find('.filter').hasClass('open')).toEqual(true);
+    wrapper.find('.btn-text').simulate('click');
+    expect(wrapper.find('.filter').hasClass('open')).toEqual(false);
+  });
+});
+</code>
+          </pre>
+        </section>
+        <section class="fullscreen">
+          <pre>
+<code class="js">
+Feature('checkHomePage');
+
+Scenario('test sign up', (I) => {
+
+  I.amOnPage('http://tubex:3000/');
+  I.see('MOST VIEWED TODAY');
+  I.see('MOST RECENT PORNTUBE VIDEOS');
+  I.see('TOP CHANNELS');
+  I.see('FEATURED PORNSTARS');
+  I.click('Sign up');
+  I.fillField('username', 'testsignup');
+  I.fillField('email', 'test@test.com');
+  I.fillField('confirmemail', 'test@test.com');
+  I.fillField('password', '123456');
+  I.see('Email already in use, please use another');
+  I.fillField('email', 'a@a.com');
+  I.fillField('confirmemail', 'a@a.com');
+  I.fillField('password', '123456');
+  I.waitForElement('.tooltip.validate', 10); // secs
+  I.see('You will need to validate your email to use the site, make sure you have introduced it correctly');
+  I.waitForElement('.btn-primary', 10); // secs
+  I.click('form button[type=submit]');
+  I.waitForElement('.toast', 10); // secs
+  I.see('Enjoy the site!');
+
+});
+</code>
+          </pre>
+        </section>
+        <section>
+          <div class="wrap aligncenter">
+            <h2>¿Preguntas?</h2>
+          </div>
+        </section>
+        <section>
+          <div class="wrap aligncenter">
             <h2>Gracias</h2>
             <a href="https://github.com/solilokiam/deSymfony2017">https://github.com/solilokiam/deSymfony2017</a>
           </div>
